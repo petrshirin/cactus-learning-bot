@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+BOT_TOKEN = ''
+
 # Application definition
 
 INSTALLED_APPS = [
