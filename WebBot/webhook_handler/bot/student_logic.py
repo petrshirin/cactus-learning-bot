@@ -121,7 +121,7 @@ class StudentAction:
         message_text = ru.get('student_task').format(user_task.task.name, user_task.task.description)
         markup.add(types.InlineKeyboardButton('Теория курса', callback_data=f'tasktheory_{task_id}'))
         markup.add(types.InlineKeyboardButton('Пройти тест', callback_data=f'start_test_{task_id}'))
-        if user_task.files:
+        if user_task.task.files:
             markup.add(types.InlineKeyboardButton('Файлы задания', callback_data=f'taskfiles_{task_id}'))
 
         if not user_task.mark:
