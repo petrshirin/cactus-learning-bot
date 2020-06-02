@@ -144,7 +144,7 @@ def text_logic(message):
             if user.step == 21:
                 user.step = 0
                 user.save()
-                action.add_student_to_group()
+                action.add_student_to_group(message.text)
             if user.step == 31:
                 user_task = UserTask.objects.filter(changed_user=True).first()
                 if not user_task:

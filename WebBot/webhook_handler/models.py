@@ -82,7 +82,7 @@ class StudentGroup(models.Model):
     is_changed_user = models.BooleanField(default=False)
 
     def generate_course_code(self):
-        self.code = str([chr(randint(65, 90)) for i in range(6)])
+        self.code = ''.join([chr(randint(65, 90)) for i in range(6)])
 
 
 class UserTask(models.Model):
