@@ -15,7 +15,7 @@ from django.core.files import File
 import logging
 
 
-bot = TeleBot('686614144:AAEKIVMLl18RiNDGUlKHpFLZf9KoXTnRD98')
+bot = TeleBot('1124494625:AAEMJU3BegnDFENZh1IZAtITUvkq60C2jOE')
 #bot.remove_webhook()
 
 

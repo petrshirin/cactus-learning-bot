@@ -17,7 +17,7 @@ site_url = 'http://www.tkl.one/'
 
 
 
-bot = TeleBot('904287379:AAFfP3aLUBJZ_xvUrP7jsed3CjSzsaAmIig')
+bot = TeleBot('')
 bot.remove_webhook()
 
 
