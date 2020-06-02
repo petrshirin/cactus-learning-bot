@@ -118,7 +118,7 @@ class StudentAction:
     def task(self, task_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
         user_task = UserTask.objects.filter(pk=task_id).first()
-        message_text = ru.get('student_task').format(user_task.task.name, user_task.task.decription)
+        message_text = ru.get('student_task').format(user_task.task.name, user_task.task.description)
         markup.add(types.InlineKeyboardButton('Теория курса', callback_data=f'tasktheory_{task_id}'))
         markup.add(types.InlineKeyboardButton('Пройти тест', callback_data=f'start_test_{task_id}'))
         if user_task.files:
