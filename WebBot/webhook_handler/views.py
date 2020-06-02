@@ -7,8 +7,7 @@ from django.conf import settings
 #from .bot.bot_logic import *
 
 # Create your views here.
-
-bot = TeleBot(settings['BOT_TOKEN'])
+bot = TeleBot('686614144:AAEKIVMLl18RiNDGUlKHpFLZf9KoXTnRD98')
 
 
 def get_web_hook(request, token):
