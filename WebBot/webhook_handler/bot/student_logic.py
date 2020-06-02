@@ -57,7 +57,7 @@ class StudentAction:
     def my_groups(self):
         message_text = ru.get('student_my_groups')
         markup = types.InlineKeyboardMarkup(row_width=1)
-        student_groups = StudentGroup.objects.filter(studetns__in=[self.user]).all()
+        student_groups = StudentGroup.objects.filter(students__in=[self.user]).all()
         for student_group in student_groups:
             markup.add(types.InlineKeyboardButton(student_group.name, callback_data=f'group_{student_group.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'student_main_menu'))
