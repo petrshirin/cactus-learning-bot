@@ -436,6 +436,36 @@ def inline_logic(c):
         elif 'change_my_fio' == c.data:
             action.change_my_fio()
 
+        elif 'addfilecourse_' in c.data:
+            try:
+                param = c.data.split('_')
+                course_id = int(param[1])
+                file_id = int(param[2])
+            except Exception as err:
+                LOG.error(err)
+                return
+            bot.send_message(chat_id=c.message.chat.id, text='В разработке')
+
+        elif 'addfilepart_' in c.data:
+            try:
+                param = c.data.split('_')
+                part_id = int(param[1])
+                file_id = int(param[2])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.add_file_to_part(part_id, file_id)
+
+        elif 'addfilecourse_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+                file_id = int(param[2])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.add_file_to_task(task_id, file_id)
+
         elif 'group_' in c.data:
             try:
                 param = c.data.split('_')

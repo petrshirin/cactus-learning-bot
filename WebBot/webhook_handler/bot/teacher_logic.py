@@ -306,12 +306,29 @@ class TeacherAction:
         files = UserFile.objects.filter(user=self.user).all()
         for file in files:
             if course_id:
-                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilecourse_{course_id}'))
+                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilecourse_{course_id}_{file.pk}'))
             elif part_id:
-                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilepart_{part_id}'))
+                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilepart_{part_id}_{file.pk}'))
             elif task_id:
-                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfiletask_{task_id}'))
+                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfiletask_{task_id}_{file.pk}'))
         return markup
+
+    def add_file_to_course(self, course_id, file_id):
+        pass
+
+    def add_file_to_part(self, part_id, file_id):
+        part = CoursePart.objects.filter(pk=part_id).first()
+        file = UserFile.objects.filter(pk=file_id).first()
+        part.theory_files.add(file)
+        part.save()
+        self.bot.send_message(chat_id=self.message.chat.id, text=f"Файл {file.file.name} Добавлен")
+
+    def add_file_to_task(self, task_id, file_id):
+        task = CourseTask.objects.filter(pk=task_id).first()
+        file = UserFile.objects.filter(pk=file_id).first()
+        task.theory_files.add(file)
+        task.save()
+        self.bot.send_message(chat_id=self.message.chat.id, text=f"Файл {file.file.name} Добавлен")
 
     def settings(self):
         message_text = ru.get('settings')
