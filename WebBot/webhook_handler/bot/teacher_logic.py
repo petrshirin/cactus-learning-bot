@@ -306,6 +306,7 @@ class TeacherAction:
         markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
         course.is_changed_user = True
+        course.save()
         self.user.step = 21
         self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
@@ -318,6 +319,8 @@ class TeacherAction:
         message_text = ru.get('change_course_description')
         markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
+        course.is_changed_user = True
+        course.save()
         self.user.step = 22
         self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
@@ -345,7 +348,7 @@ class TeacherAction:
                                    reply_markup=markup, message_id=self.message.message_id)
 
     def course_part(self, course_id, part_id):
-        part = CoursePart.objects.filter(part_id).first()
+        part = CoursePart.objects.filter(pk=part_id).first()
         if not part:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Такой темы больше не существует', message_id=self.message.message_id)
             return
@@ -399,7 +402,7 @@ class TeacherAction:
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
         
     def change_part_status(self, course_id, part_id):
-        part = CoursePart.objects.filter(part_id).first()
+        part = CoursePart.objects.filter(pk=part_id).first()
         if not part:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Такой темы больше не существует', message_id=self.message.message_id)
             return
@@ -469,7 +472,7 @@ class TeacherAction:
         message_text = ru.get('tasks')
         markup = types.InlineKeyboardMarkup(row_width=1)
         markup.add(types.InlineKeyboardButton('Создать новое задание', callback_data=f'createnewtask_{part_id}'))
-        tasks = CourseTask.objects.filter(creator=self.user).all()
+        tasks = CoursePart.objects.filter(pk=part_id).first().tasks.all()
         for task in tasks:
             markup.add(types.InlineKeyboardButton(task.name, callback_data=f'task_{course_id}_{part_id}_{task.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'editpart_{course_id}_{part_id}'))
