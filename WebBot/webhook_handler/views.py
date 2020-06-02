@@ -4,7 +4,7 @@ import logging
 from telebot import TeleBot, types
 from django.conf import settings
 
-from .bot.bot_logic import *
+#from .bot.bot_logic import *
 
 # Create your views here.
 
