@@ -156,13 +156,13 @@ def text_logic(message):
                 user_task.save()
                 user.step = 0
                 user.save()
-                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id=message.chat.id, text='Ваш ответ записан', reply_markup=types.ReplyKeyboardRemove())
                 action.welcome_student()
             if user.step == 41:
                 user.step = 0
                 user.FIO = message.text
                 user.save()
-                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id=message.chat.id, text='ФИО изменено', reply_markup=types.ReplyKeyboardRemove())
                 action.welcome_student()
 
     elif user.status == 2:
