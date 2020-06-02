@@ -136,7 +136,7 @@ class StudentAction:
         message_text = ru.get('student_task_files')
         user_task = UserTask.objects.filter(pk=task_id).first()
         for file in user_task.task.files.all():
-            markup.add(types.InlineKeyboardButton(file.filename, callback_data=f'downloadfile_{file.pk}'))
+            markup.add(types.InlineKeyboardButton(file.file.filename, callback_data=f'downloadfile_{file.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'task_{task_id}'))
         self.bot.edit_message_text(chat_id=self.message.chat.id, text=message_text,
                                    reply_markup=markup, message_id=self.message.message_id)
