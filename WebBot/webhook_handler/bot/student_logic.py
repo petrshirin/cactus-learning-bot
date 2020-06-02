@@ -98,7 +98,7 @@ class StudentAction:
     def my_debts(self):
         message_text = ru.get('student_my_debts')
         markup = types.InlineKeyboardMarkup(row_width=1)
-        user_tasks = UserTask(user=self.user, mark=None).all()
+        user_tasks = UserTask.objects.filter(user=self.user, mark=None).all()
         for user_task in user_tasks:
             markup.add(types.InlineKeyboardButton(user_task.task.name, callback_data=f'task_{user_task.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'student_main_menu'))
