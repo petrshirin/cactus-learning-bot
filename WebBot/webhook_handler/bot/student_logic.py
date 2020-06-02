@@ -177,7 +177,7 @@ class StudentAction:
     def download_file(self, file_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
         file = UserFile.objects.filter(pk=file_id).first()
-        self.bot.send_document(chat_id=self.message.chat.id, data=file.open(mode='rb'))
+        self.bot.send_document(chat_id=self.message.chat.id, data=file.file.open(mode='rb'))
 
     def settings(self):
         message_text = ru.get('student_settings')
