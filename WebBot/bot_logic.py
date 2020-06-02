@@ -25,7 +25,7 @@ LOG = logging.getLogger(__name__)
 def welcome_message(message):
     user = TelegramUser.objects.filter(user_id=message.chat.id).first()
     if not user:
-        user = TelegramUser(user_id=message.chat.id, user_name=message.from_user.first_name)
+        user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     action = CommonAction(bot, message, user)
     action.welcome_action()
@@ -35,7 +35,7 @@ def welcome_message(message):
 def switch_student(message):
     user = TelegramUser.objects.filter(user_id=message.chat.id).first()
     if not user:
-        user = TelegramUser(user_id=message.chat.id, user_name=message.from_user.first_name)
+        user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     action = CommonAction(bot, message, user)
     action.switch_to_student()
@@ -45,7 +45,7 @@ def switch_student(message):
 def switch_teacher(message):
     user = TelegramUser.objects.filter(user_id=message.chat.id).first()
     if not user:
-        user = TelegramUser(user_id=message.chat.id, user_name=message.from_user.first_name)
+        user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     action = CommonAction(bot, message, user)
     action.switch_to_teacher()
@@ -57,7 +57,7 @@ def switch_teacher(message):
 def document_logic(message):
     user = TelegramUser.objects.filter(user_id=message.chat.id).first()
     if not user:
-        user = TelegramUser(user_id=message.chat.id, user_name=message.from_user.first_name)
+        user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     try:
         if user.status == 2:
@@ -86,7 +86,7 @@ def document_logic(message):
 def text_logic(message):
     user = TelegramUser.objects.filter(user_id=message.chat.id).first()
     if not user:
-        user = TelegramUser(user_id=message.chat.id, user_name=message.from_user.first_name)
+        user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     user_text = message.text.strip().lower()
     if user.status == 2:
