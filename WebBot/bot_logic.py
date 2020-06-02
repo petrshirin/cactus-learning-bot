@@ -456,7 +456,7 @@ def inline_logic(c):
                 return
             action.add_file_to_part(part_id, file_id)
 
-        elif 'addfilecourse_' in c.data:
+        elif 'addfiletask_' in c.data:
             try:
                 param = c.data.split('_')
                 task_id = int(param[1])
