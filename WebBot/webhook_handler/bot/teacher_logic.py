@@ -326,7 +326,7 @@ class TeacherAction:
     def add_file_to_task(self, task_id, file_id):
         task = CourseTask.objects.filter(pk=task_id).first()
         file = UserFile.objects.filter(pk=file_id).first()
-        task.theory_files.add(file)
+        task.files.add(file)
         task.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=f"Файл {file.file.name} Добавлен")
 
@@ -593,6 +593,8 @@ class TeacherAction:
         message_text = ru.get('change_task_name')
         markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
+        task.is_changed_user = True
+        task.save()
         self.user.step = 41
         self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
@@ -605,6 +607,8 @@ class TeacherAction:
         message_text = ru.get('change_task_description')
         markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
+        task.is_changed_user = True
+        task.save()
         self.user.step = 42
         self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)

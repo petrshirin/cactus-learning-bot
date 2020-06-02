@@ -466,6 +466,16 @@ def inline_logic(c):
                 return
             action.add_file_to_task(task_id, file_id)
 
+        elif 'addtaskfiles_' in c.data:
+            try:
+                param = c.data.split('_')
+                course_id = int(param[1])
+                part_id = int(param[2])
+                task_id = int(param[3])
+            except Exception as err:
+                LOG.error(err)
+                return
+
         elif 'group_' in c.data:
             try:
                 param = c.data.split('_')
