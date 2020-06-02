@@ -308,9 +308,9 @@ class TeacherAction:
             if course_id:
                 markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilecourse_{course_id}'))
             elif part_id:
-                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilepart_{course_id}'))
+                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfilepart_{part_id}'))
             elif task_id:
-                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfiletask_{course_id}'))
+                markup.add(types.InlineKeyboardButton(file.file.name, callback_data=f'addfiletask_{task_id}'))
         return markup
 
     def settings(self):
