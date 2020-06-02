@@ -496,7 +496,7 @@ class TeacherAction:
         for user_part in user_parts:
             for user_task in user_part.tasks.filter(~Q(text_answer=None)| ~Q(answer_file=None)).all():
                 markup.add(types.InlineKeyboardButton(f'{user_task.task.name} {user_task.user.FIO}', callback_data=f'useranswer_{course_id}_{part_id}_{user_task.pk}'))
-            tasks = user_parts.tasks.all()
+            # tasks = user_parts.tasks.all()
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'coursepart_{course_id}_{part_id}'))
 
         try:
