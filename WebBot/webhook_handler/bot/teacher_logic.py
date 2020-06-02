@@ -569,6 +569,7 @@ class TeacherAction:
                 self.bot.edit_message_text(chat_id=self.message.chat.id, text='Такой темы больше не существует', message_id=self.message.message_id)
                 return
             part.tasks.add(task)
+            part.save()
         else:
             task = CourseTask.objects.filter(pk=task_id).first()
 
