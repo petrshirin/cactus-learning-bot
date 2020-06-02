@@ -87,7 +87,7 @@ class StudentGroup(models.Model):
 
 class UserTask(models.Model):
     user = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
-    task = models.ForeignKey(CoursePart, on_delete=models.CASCADE)
+    task = models.ForeignKey(CourseTask, on_delete=models.CASCADE)
     answer_file = models.ForeignKey(UserFile, on_delete=models.SET_NULL, null=True, blank=True)
     text_answer = models.TextField(default=None, null=True, blank=True)
     mark = models.FloatField(default=None, null=True, blank=True)
