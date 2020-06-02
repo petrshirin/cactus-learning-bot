@@ -108,7 +108,7 @@ class StudentAction:
     def course_tasks(self, group_id):
         message_text = ru.get('student_course_tasks')
         markup = types.InlineKeyboardMarkup(row_width=1)
-        user_tasks = UserTask(user=self.user).all()
+        user_tasks = UserTask.objects.filter(user=self.user).all()
         for user_task in user_tasks:
             markup.add(types.InlineKeyboardButton(f'{user_task.task.name} {"Завершено" if user_task.mark else ""}', callback_data=f'task_{user_task.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'group_{group_id}'))
@@ -117,7 +117,7 @@ class StudentAction:
 
     def task(self, task_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
-        user_task = UserTask(pk=task_id).first()
+        user_task = UserTask.objects.filter(pk=task_id).first()
         message_text = ru.get('student_task').format(user_task.task.name, user_task.task.decription)
         markup.add(types.InlineKeyboardButton('Теория курса', callback_data=f'tasktheory_{task_id}'))
         markup.add(types.InlineKeyboardButton('Пройти тест', callback_data=f'start_test_{task_id}'))
@@ -134,7 +134,7 @@ class StudentAction:
     def task_files(self, task_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
         message_text = ru.get('student_task_files')
-        user_task = UserTask(pk=task_id).first()
+        user_task = UserTask.objects.filter(pk=task_id).first()
         for file in user_task.task.files.all():
             markup.add(types.InlineKeyboardButton(file.filename, callback_data=f'downloadfile_{file.pk}'))
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'task_{task_id}'))
@@ -144,7 +144,7 @@ class StudentAction:
     def task_theory(self, task_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
         message_text = ru.get('student_task_theory')
-        user_task = UserTask(pk=task_id).first()
+        user_task = UserTask.objects.filter(pk=task_id).first()
         part = UserPart.objects.filter(tasks__in=[user_task]).first()
         for file in part.theory_files.all():
             markup.add(types.InlineKeyboardButton(file.filename, callback_data=f'downloadfile_{file.pk}'))
@@ -157,7 +157,7 @@ class StudentAction:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
         self.user.step = 31
-        user_task = UserTask(pk=task_id).first()
+        user_task = UserTask.objects.filter(pk=task_id).first()
         user_task.changed_user = True
         user_task.save()
         self.user.save()
@@ -168,7 +168,7 @@ class StudentAction:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
         self.user.step = 32
-        user_task = UserTask(pk=task_id).first()
+        user_task = UserTask.objects.filter(pk=task_id).first()
         user_task.changed_user = True
         user_task.save()
         self.user.save()
@@ -176,7 +176,7 @@ class StudentAction:
 
     def download_file(self, file_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
-        file = UserFile(pk=file_id).first()
+        file = UserFile.objects.filter(pk=file_id).first()
         self.bot.send_document(chat_id=self.message.chat.id, data=file.open(mode='rb'))
 
     def settings(self):
