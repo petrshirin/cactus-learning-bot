@@ -9,6 +9,7 @@ django.setup()
 
 from webhook_handler.bot.common_logic import CommonAction
 from webhook_handler.bot.teacher_logic import TeacherAction
+from webhook_handler.bot.student_logic import StudentAction
 from webhook_handler.models import *
 from django.core.files import File
 import logging
@@ -63,6 +64,21 @@ def document_logic(message):
         if user.status == 2:
             if user.step != 10:
                 bot.send_message(message.chat.id, text='Сейчас вы не можете загружать файлы< мы их проигнорировали')
+                return
+            file_info = bot.get_file(message.document.file_id)
+            downloaded_file = bot.download_file(file_info.file_path)
+            file_to_save = open('file', 'wb')
+            file_to_save.write(downloaded_file)
+            file_to_save.close()
+            file_to_read = open('file', 'rb')
+            file = File(file_to_read)
+            user_file = UserFile(user=user)
+            user_file.file.save(message.document.file_name, file, save=True)
+            bot.send_message(message.chat.id, text=f'{message.document.file_name} Загружен')
+        elif user.status == 1:
+            if user.step != 31:
+                bot.send_message(message.chat.id, text='Сейчас вы не можете загружать файлы< мы их проигнорировали')
+                return
             file_info = bot.get_file(message.document.file_id)
             downloaded_file = bot.download_file(file_info.file_path)
             file_to_save = open('file', 'wb')
@@ -73,10 +89,10 @@ def document_logic(message):
             user.step = 0
             user.save()
             user_file = UserFile(user=user)
+            user_file.save()
             user_file.file.save(message.document.file_name, file, save=True)
             bot.send_message(message.chat.id, text=f'{message.document.file_name} Загружен')
-        elif user.status == 1:
-            pass
+
     except Exception as err:
         LOG.error(err)
         bot.send_message(message.chat.id, text='При загрузке файла произошла ошибка')
@@ -89,7 +105,67 @@ def text_logic(message):
         user = TelegramUser(user_id=message.chat.id, name=message.from_user.first_name)
         user.save()
     user_text = message.text.strip().lower()
-    if user.status == 2:
+    if user.status == 1:
+        action = StudentAction(bot, message, user)
+        if user_text == 'отмена':
+            if user.step == 21:
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+            if user.step == 31:
+                user_task = UserTask.objects.filter(changed_user=True).first()
+                if not user_task:
+                    bot.send_message(chat_id=message.chat.id, text='Вы не выбрали курс', reply_markup=types.ReplyKeyboardRemove())
+                    return
+                user_task.changed_user = False
+                user_task.save()
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+            if user.step == 32:
+                user_task = UserTask.objects.filter(changed_user=True).first()
+                if not user_task:
+                    bot.send_message(chat_id=message.chat.id, text='Вы не выбрали курс', reply_markup=types.ReplyKeyboardRemove())
+                    return
+                user_task.changed_user = False
+                user_task.save()
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+            if user.step == 41:
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+        else:
+            if user.step == 21:
+                user.step = 0
+                user.save()
+                action.add_student_to_group()
+            if user.step == 31:
+                user_task = UserTask.objects.filter(changed_user=True).first()
+                if not user_task:
+                    bot.send_message(chat_id=message.chat.id, text='Вы не выбрали курс', reply_markup=types.ReplyKeyboardRemove())
+                    return
+
+                user_task.text_answer = message.text
+                user_task.changed_user = False
+                user_task.save()
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+            if user.step == 41:
+                user.step = 0
+                user.FIO = message.text
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_student()
+
+    elif user.status == 2:
         action = TeacherAction(bot, message, user)
         if user_text == 'отмена':
             if user.step == 21:
@@ -184,6 +260,19 @@ def text_logic(message):
                 user.save()
                 bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
                 action.welcome_teacher()
+
+            elif user.step == 71:
+                group = StudentGroup.objects.filter(is_changed_user=True).first()
+                if not group:
+                    bot.send_message(chat_id=message.chat.id, text='Вы не выбрали группу', reply_markup=types.ReplyKeyboardRemove())
+                    return
+                group.is_changed_user = False
+                group.save()
+                user.step = 0
+                user.save()
+                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                action.welcome_teacher()
+
             else:
                 action.welcome_teacher()
 
@@ -301,6 +390,18 @@ def text_logic(message):
                 user.save()
                 action.welcome_teacher()
 
+            elif user.step == 81:
+                group = StudentGroup.objects.filter(is_changed_user=True).first()
+                if not group:
+                    bot.send_message(chat_id=message.chat.id, text='Вы не выбрали группу', reply_markup=types.ReplyKeyboardRemove())
+                    return
+                group.is_changed_user = False
+                user.step = 0
+                group.name = message.text
+                group.save()
+                user.save()
+                action.group(group.pk, not_edited=True)
+
             else:
                 action.welcome_teacher()
 
@@ -314,7 +415,111 @@ def inline_logic(c):
     print(c.data)
     user = TelegramUser.objects.get(user_id=c.message.chat.id)
 
-    if user.status == 2:
+    if user.status == 1:
+        action = StudentAction(bot, c.message, user)
+
+        if 'student_main_menu' == c.data:
+            action.welcome_student()
+
+        elif 'my_groups' == c.data:
+            action.my_groups()
+
+        elif 'find_group' == c.data:
+            action.find_group()
+
+        elif 'my_debts' == c.data:
+            action.my_debts()
+
+        elif 'settings' == c.data:
+            action.settings()
+
+        elif 'change_my_fio' == c.data:
+            action.change_my_fio()
+
+        elif 'group_' in c.data:
+            try:
+                param = c.data.split('_')
+                group_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.group(group_id)
+
+        elif 'coursetheory_' in c.data:
+            try:
+                param = c.data.split('_')
+                group_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.course_theorygroup_id()
+
+        elif 'coursetasks_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.course_tasks(task_id)
+
+        elif 'tasktheory_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.task_theory(task_id)
+
+        elif 'taskfiles_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.task_files(task_id)
+
+        elif 'fileanswer_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.file_answer(task_id)
+
+        elif 'textanswer_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.text_answer(task_id)
+
+        elif 'task_' in c.data:
+            try:
+                param = c.data.split('_')
+                task_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.task(task_id)
+
+        elif 'downloadfile_' in c.data:
+            try:
+                param = c.data.split('_')
+                file_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.download_file(file_id)
+
+
+
+    elif user.status == 2:
         action = TeacherAction(bot, c.message, user)
 
         if 'teachermainmenu' in c.data:
@@ -335,6 +540,9 @@ def inline_logic(c):
         elif 'settings' == c.data:
             action.settings()
 
+        elif 'change_my_fio' == c.data:
+            action.change_my_fio()
+
         elif 'editcourse_' in c.data:
             try:
                 param = c.data.split('_')
@@ -354,7 +562,7 @@ def inline_logic(c):
                 return
             action.add_course_to_group(group_id, course_id, this=True)
 
-        elif 'addthiscourse_' in c.data:
+        elif 'addcourseasnew_' in c.data:
             try:
                 param = c.data.split('_')
                 group_id = int(param[1])
@@ -402,6 +610,15 @@ def inline_logic(c):
 
         elif 'create_new_group' == c.data:
             action.group()
+
+        elif 'teacherreport_' == c.data:
+            try:
+                param = c.data.split('_')
+                group_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.teacher_group_report(group_id)
 
         elif 'changecourseforgroup_' in c.data:
             try:
@@ -457,6 +674,9 @@ def inline_logic(c):
                 LOG.error(err)
                 return
             action.course_for_group(group_id, course_id)
+
+        elif 'changegroupname_' in c.data:
+            pass
 
         elif 'group_' in c.data:
             try:

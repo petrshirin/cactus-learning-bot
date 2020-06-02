@@ -70,6 +70,7 @@ class TeacherAction:
 
         message_text = ru.get('group').format(group.name)
 
+        markup.add(types.InlineKeyboardButton("Изменить имя", callback_data=f'changegroupname_{group.pk}'))
         if group.course:
             markup.add(types.InlineKeyboardButton("Переназначить курс для группы", callback_data=f'changecourseforgroup_{group.pk}'))
             markup.add(types.InlineKeyboardButton("Темы курса", callback_data=f'courseparts_{group.course.pk}'))
@@ -92,7 +93,7 @@ class TeacherAction:
             self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def send_message_to_students(self, group_id):
-        group = StudentGroup.objects.filter(group_id).first()
+        group = StudentGroup.objects.filter(pk=group_id).first()
         if not group:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Такой группы больше не существует', message_id=self.message.message_id)
             return
@@ -112,6 +113,20 @@ class TeacherAction:
         self.bot.edit_message_text(chat_id=self.message.chat.id, text=message_text,
                                    reply_markup=markup, message_id=self.message.message_id)
 
+    def change_group_name(self, group_id):
+        group = StudentGroup.objects.filter(pk=group_id).first()
+        if not group:
+            self.bot.edit_message_text(chat_id=self.message.chat.id, text='Группы больше не существует', message_id=self.message.message_id)
+            return
+        message_text = ru.get('change_group_name')
+        markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+        markup.add(types.KeyboardButton('Отмена'))
+        group.is_changed_user = True
+        group.save()
+        self.user.step = 81
+        self.user.save()
+        self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
+
     def student_list(self, group_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
         group = StudentGroup.objects.filter(creator=self.user, pk=group_id).first()
@@ -119,8 +134,35 @@ class TeacherAction:
         markup.add(types.InlineKeyboardButton('Отчет об успеваемости', callback_data=f'teacherreport_{group_id}'))
         for student in group.students.all():
             markup.add(types.InlineKeyboardButton(student.FIO, callback_data=f'student_{group_id}_{student.pk}'))
+        markup.add(types.InlineKeyboardButton('Назад', callback_data=f'group_{group_id}'))
         self.bot.edit_message_text(chat_id=self.message.chat.id, text=message_text,
                                    reply_markup=markup, message_id=self.message.message_id)
+
+    def teacher_group_report(self, group_id):
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        group = StudentGroup.objects.filter(creator=self.user, pk=group_id).first()
+
+        count_opened_parts = CoursePart.objects.filter(creator=self.user).all().count()
+        user_courses = UserCourse.objects.filter(course=group.course).all()
+        count_all_tasks = 0
+        count_completed_tasks = 0
+        count_student_not_done_task = 0
+        for user_course in user_courses:
+            user_parts = user_course.parts.all()
+            for user_part in user_parts:
+                last_user = None
+                tasks = user_part.tasks.all()
+                for task in tasks:
+                    count_all_tasks += 1
+                    if task.mark:
+                        count_completed_tasks += 1
+                    else:
+                        if last_user == task.user:
+                            count_student_not_done_task += 1
+                            last_user = task.user
+        message_text = ru.get('teacher_report').format(count_opened_parts, count_completed_tasks/count_all_tasks*100, count_student_not_done_task)
+        self.bot.send_message(chat_id=self.message.chat.id, text=message_text)
+        self.group(group_id, not_edited=True)
 
     def student(self, student_id, group_id):
         markup = types.InlineKeyboardMarkup(row_width=1)
@@ -279,6 +321,14 @@ class TeacherAction:
         self.bot.edit_message_text(chat_id=self.message.chat.id, text=message_text,
                                    reply_markup=markup, message_id=self.message.message_id)
 
+    def change_my_fio(self):
+        message_text = ru.get('change_my_fio')
+        markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+        markup.add(types.KeyboardButton('Отмена'))
+        self.user.step = 91
+        self.user.save()
+        self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
+
     def edit_course(self, course_id):
 
         course = Course.objects.filter(pk=course_id).first()
@@ -408,6 +458,15 @@ class TeacherAction:
             return
         part.is_opened = not part.is_opened
         part.save()
+        if part.is_opened:
+            course = Course.objects.filter(pk=course_id).first()
+            student_groups = StudentGroup.objects.filter(course=course).all()
+            for student_group in student_groups:
+                for student in student_group.students.all():
+                    for task in part.tasks.all():
+                        user_task = UserTask(task=task, user=student)
+                        user_task.save()
+                        user_part.tasks.add(user_task)
         self.course_part(course_id, part_id)
 
     def check_home_work_per_part(self, course_id, part_id):
