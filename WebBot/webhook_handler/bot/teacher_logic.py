@@ -239,7 +239,7 @@ class TeacherAction:
     def create_new_course(self):
         message_text = ru.get('create_new_course')
         markup = types.InlineKeyboardMarkup(row_width=1)
-        course = Course()
+        course = Course(creator=self.user)
         course.save()
 
         markup.add(types.InlineKeyboardButton('Изменить название', callback_data=f'changecoursename_{course.pk}'))

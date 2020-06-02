@@ -23,7 +23,7 @@ def create_user_file_path(instance, filename):
 
 class UserFile(models.Model):
     user = models.ForeignKey(TelegramUser, on_delete=models.SET_NULL, null=True, blank=True)
-    file = models.FileField('Загруженный файл', upload_to=create_user_file_path, null=True, blank=True, default=True)
+    file = models.FileField('Загруженный файл', upload_to=create_user_file_path, null=True, blank=True, default=None)
 
 
 class TestVariants(models.Model):
