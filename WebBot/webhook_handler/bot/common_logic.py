@@ -20,7 +20,14 @@ class CommonAction:
             3. Начинайте учиться
         Чтобы перейти в интерфейс преподавателя - /teacher
         Вернуться к интерфейсу студента - /student'''
-        self.bot.send_message(chat_id=self.message.chat.id, text=message_text)
+        self.user.status = 1
+        self.user.save()
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton('Мои группы', callback_data='my_groups'))
+        markup.add(types.InlineKeyboardButton('Найти новую группу', callback_data='find_group'))
+        markup.add(types.InlineKeyboardButton('Мои долги', callback_data='my_debts'))
+        markup.add(types.InlineKeyboardButton('Настройки', callback_data='settings'))
+        self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def switch_to_student(self):
         message_text = '''Теперь вы студент! Чтобы начать учиться:
@@ -31,7 +38,12 @@ class CommonAction:
                 Вернуться к интерфейсу студента - /student'''
         self.user.status = 1
         self.user.save()
-        self.bot.send_message(chat_id=self.message.chat.id, text=message_text)
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(types.InlineKeyboardButton('Мои группы', callback_data='my_groups'))
+        markup.add(types.InlineKeyboardButton('Найти новую группу', callback_data='find_group'))
+        markup.add(types.InlineKeyboardButton('Мои долги', callback_data='my_debts'))
+        markup.add(types.InlineKeyboardButton('Настройки', callback_data='settings'))
+        self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def switch_to_teacher(self):
         message_text = '''Теперь вы Преподаватель!'''
