@@ -475,6 +475,7 @@ def inline_logic(c):
             except Exception as err:
                 LOG.error(err)
                 return
+            action.add_files_task(course_id, part_id, task_id)
 
         elif 'group_' in c.data:
             try:
