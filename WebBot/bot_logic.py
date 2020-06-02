@@ -452,7 +452,8 @@ def inline_logic(c):
             except Exception as err:
                 LOG.error(err)
                 return
-            action.course_theorygroup_id()
+            bot.send_message(chat_id=c.message.chat.id, text='В разработке')
+            # action.course_theorygroup_id()
 
         elif 'coursetasks_' in c.data:
             try:

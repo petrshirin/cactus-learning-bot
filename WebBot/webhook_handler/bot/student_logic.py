@@ -164,7 +164,7 @@ class StudentAction:
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def file_answer(self, task_id):
-        message_text = ru.get('student_text_answer')
+        message_text = ru.get('student_file_answer')
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(types.KeyboardButton('Отмена'))
         self.user.step = 32
