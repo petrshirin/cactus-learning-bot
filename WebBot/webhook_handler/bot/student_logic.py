@@ -209,7 +209,7 @@ class StudentAction:
         points = 0.0
         count_not_done_tasks = 0
         for user_part in user_course.course_parts.filter(part__is_opened=True).all():
-            for user_task in user_part:
+            for user_task in user_part.tasks.all():
                 if user_task.mark is not None:
                     points += user_task.mark
                 else:
