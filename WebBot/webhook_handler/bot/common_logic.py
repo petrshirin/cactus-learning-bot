@@ -29,10 +29,14 @@ class CommonAction:
                     3. Начинайте учиться
                 Чтобы перейти в интерфейс преподавателя - /teacher
                 Вернуться к интерфейсу студента - /student'''
+        self.user.status = 1
+        self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text)
 
     def switch_to_teacher(self):
         message_text = '''Теперь вы Преподаватель!'''
+        self.user.status = 2
+        self.user.save()
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text)
 
 
