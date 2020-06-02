@@ -13,12 +13,9 @@ from webhook_handler.models import *
 from django.core.files import File
 import logging
 
-site_url = 'http://www.tkl.one/'
 
-
-
-bot = TeleBot('904287379:AAFfP3aLUBJZ_xvUrP7jsed3CjSzsaAmIig')
-bot.remove_webhook()
+bot = TeleBot('686614144:AAEKIVMLl18RiNDGUlKHpFLZf9KoXTnRD98')
+#bot.remove_webhook()
 
 
 LOG = logging.getLogger(__name__)
