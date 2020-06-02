@@ -89,7 +89,7 @@ class StudentAction:
             self.bot.send_message(chat_id=self.message.chat.id, text='Вы уже находитесь в этой группе')
             self.welcome_student()
             return
-        self._generate_user_course(student_group.course)
+        self._generate_user_course(student_group.course.pk)
         student_group.students.add(self.user)
         student_group.save()
         self.bot.send_message(chat_id=self.message.chat.id, text='Вы успешно добавлены в группу')
@@ -204,7 +204,7 @@ class StudentAction:
 
         user_course = UserCourse.objects.filter(course=group.course, user=self.user).first()
         if not user_course:
-            self._generate_user_course(group.course)
+            self._generate_user_course(group.course.pk)
 
         points = 0.0
         count_not_done_tasks = 0
