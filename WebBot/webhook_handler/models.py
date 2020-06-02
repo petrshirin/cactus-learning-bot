@@ -77,7 +77,7 @@ class StudentGroup(models.Model):
     creator = models.ForeignKey(TelegramUser, on_delete=models.CASCADE, related_name='student_creator')
     name = models.CharField(max_length=255, default='Курс без имени')
     students = models.ManyToManyField(TelegramUser, related_name='students')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default=None, null=True, blank=True)
     code = models.CharField(max_length=20, null=True, blank=True)
     is_changed_user = models.BooleanField(default=False)
 

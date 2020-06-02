@@ -113,7 +113,7 @@ def text_logic(message):
                 user.step = 0
                 user.save()
                 bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
-                action.edit_course(course.pk, f'editcourse_{course.pk}')
+                action.edit_course(course.pk)
             elif user.step == 31:
                 part = CoursePart.objects.filter(is_changed_user=True).first()
                 if not part:
@@ -211,7 +211,7 @@ def text_logic(message):
                 course.description = message.text
                 course.save()
                 bot.send_message(chat_id=message.chat.id, text='Описание изменено', reply_markup=types.ReplyKeyboardRemove())
-                action.edit_course(course.pk, f'editcourse_{course.pk}')
+                action.edit_course(course.pk)
             elif user.step == 31:
                 part = CoursePart.objects.filter(is_changed_user=True).first()
                 if not part:
@@ -222,8 +222,8 @@ def text_logic(message):
                 user.save()
                 part.name = message.text
                 part.save()
-                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
-                action.welcome_teacher()
+                bot.send_message(chat_id=message.chat.id, text='Имя изменено', reply_markup=types.ReplyKeyboardRemove())
+                action.edit_part()
 
             elif user.step == 41:
                 task = CourseTask.objects.filter(is_changed_user=True).first()
@@ -235,7 +235,7 @@ def text_logic(message):
                 user.save()
                 task.name = message.text
                 task.save()
-                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id=message.chat.id, text='Имя изменено', reply_markup=types.ReplyKeyboardRemove())
                 action.welcome_teacher()
 
             elif user.step == 42:
@@ -248,7 +248,7 @@ def text_logic(message):
                 task.description = message.text
                 task.save()
                 user.save()
-                bot.send_message(chat_id=message.chat.id, text='Действие отмнено', reply_markup=types.ReplyKeyboardRemove())
+                bot.send_message(chat_id=message.chat.id, text='Описание изменено', reply_markup=types.ReplyKeyboardRemove())
                 action.welcome_teacher()
 
             elif user.step == 51:

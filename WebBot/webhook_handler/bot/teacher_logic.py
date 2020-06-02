@@ -411,11 +411,16 @@ class TeacherAction:
         self.course_part(course_id, part_id)
 
     def check_home_work_per_part(self, course_id, part_id):
-        user_part = UserPart.objects.filter(part__pk=part_id).first()
+        user_parts = UserPart.objects.filter(part__pk=part_id).all()
         markup = types.InlineKeyboardMarkup(row_width=1)
+        if not user_parts:
+            self.bot.edit_message_text(chat_id=self.message.chat.id, text='Такой темы больше не существует', message_id=self.message.message_id)
+            return
         message_text = ru.get('check_home_work_per_part')
-        for user_task in user_part.tasks.filter(~Q(text_answer=None)| ~Q(answer_file=None)).all():
-            markup.add(types.InlineKeyboardButton(f'{user_task.name} {user_task.user.FIO}', callback_data=f'useranswer_{course_id}_{part_id}_{user_task.pk}'))
+        for user_part in user_parts:
+            for user_task in user_part.tasks.filter(~Q(text_answer=None)| ~Q(answer_file=None)).all():
+                markup.add(types.InlineKeyboardButton(f'{user_task.name} {user_task.user.FIO}', callback_data=f'useranswer_{course_id}_{part_id}_{user_task.pk}'))
+            tasks = user_parts.tasks.all()
         markup.add(types.InlineKeyboardButton('Назад', callback_data=f'coursepart_{course_id}_{part_id}'))
 
         try:
@@ -471,7 +476,7 @@ class TeacherAction:
             return
         message_text = ru.get('tasks')
         markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(types.InlineKeyboardButton('Создать новое задание', callback_data=f'createnewtask_{part_id}'))
+        markup.add(types.InlineKeyboardButton('Создать новое задание', callback_data=f'createnewtask_{course_id}_{part_id}'))
         tasks = CoursePart.objects.filter(pk=part_id).first().tasks.all()
         for task in tasks:
             markup.add(types.InlineKeyboardButton(task.name, callback_data=f'task_{course_id}_{part_id}_{task.pk}'))
