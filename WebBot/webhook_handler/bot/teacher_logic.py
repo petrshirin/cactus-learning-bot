@@ -1,4 +1,4 @@
-from .webhook_handler.models import *
+from webhook_handler.models import *
 from telebot import TeleBot, types, apihelper
 from django.db.models import Q
 from django.utils import timezone

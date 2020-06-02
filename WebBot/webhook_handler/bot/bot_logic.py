@@ -1,14 +1,23 @@
 from telebot import TeleBot, types
-from webhook_handler.models import *
-from .common_logic import CommonAction
-from .teacher_logic import TeacherAction
+
+import os
+import django
+from django.db import Error
+
+os.environ["DJANGO_SETTINGS_MODULE"] = 'WebBot.settings'
+django.setup()
+
+from webhook_handler.bot.common_logic import CommonAction
+from webhook_handler.bot.teacher_logic import TeacherAction
 from webhook_handler.models import *
 from django.core.files import File
 import logging
 
+site_url = 'http://www.tkl.one/'
+
+
 
 bot = TeleBot('904287379:AAFfP3aLUBJZ_xvUrP7jsed3CjSzsaAmIig')
-bot.set_webhook('https://cactus.mytesttelegrambotdev.ru')
 bot.remove_webhook()
 
 
