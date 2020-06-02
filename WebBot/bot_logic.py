@@ -544,6 +544,15 @@ def inline_logic(c):
         elif 'change_my_fio' == c.data:
             action.change_my_fio()
 
+        elif 'changegroupname_' in c.data:
+            try:
+                param = c.data.split('_')
+                group_id = int(param[1])
+            except Exception as err:
+                LOG.error(err)
+                return
+            action.change_group_name(group_id)
+
         elif 'addfilecourse_' in c.data:
             try:
                 param = c.data.split('_')
