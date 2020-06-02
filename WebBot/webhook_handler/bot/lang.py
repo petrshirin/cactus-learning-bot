@@ -17,7 +17,7 @@ ru = {
     'my_groups': 'Мои группы',
     'group': 'Группа: {}',
     'send_message_to_students': "Отправить сообщение студентам",
-    'get_course_code': 'Ваш код группы: {}',
+    'get_course_code': 'Код группы {}: {}',
     'student_list': 'Список студентов {}',
     'teacher_report': '''
 Открыто тем: {}
