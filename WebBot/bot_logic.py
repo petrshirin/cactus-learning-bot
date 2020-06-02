@@ -401,7 +401,7 @@ def inline_logic(c):
             action.course(course_id)
 
         elif 'create_new_group' == c.data:
-            action.create_new_course()
+            action.group()
 
         elif 'changecourseforgroup_' in c.data:
             try:

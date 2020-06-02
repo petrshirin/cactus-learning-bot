@@ -281,7 +281,7 @@ class TeacherAction:
 
     def edit_course(self, course_id):
 
-        course = Course.objects.filter(course_id).first()
+        course = Course.objects.filter(pk=course_id).first()
         if not course:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Курс больше не существует', message_id=self.message.message_id)
             return
@@ -298,7 +298,7 @@ class TeacherAction:
                                    reply_markup=markup, message_id=self.message.message_id)
 
     def change_course_name(self, course_id):
-        course = Course.objects.filter(course_id).first()
+        course = Course.objects.filter(pk=course_id).first()
         if not course:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Курс больше не существует', message_id=self.message.message_id)
             return
@@ -311,7 +311,7 @@ class TeacherAction:
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def change_course_description(self, course_id):
-        course = Course.objects.filter(course_id).first()
+        course = Course.objects.filter(pk=course_id).first()
         if not course:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Курс больше не существует', message_id=self.message.message_id)
             return
@@ -323,14 +323,14 @@ class TeacherAction:
         self.bot.send_message(chat_id=self.message.chat.id, text=message_text, reply_markup=markup)
 
     def additional_literature(self, course_id):
-        course = Course.objects.filter(course_id).first()
+        course = Course.objects.filter(pk=course_id).first()
         if not course:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Курс больше не существует', message_id=self.message.message_id)
             return
         self.bot.send_message(chat_id=self.message.chat.id, text='В разработке')
 
     def course_parts(self, course_id):
-        course = Course.objects.filter(course_id).first()
+        course = Course.objects.filter(pk=course_id).first()
         if not course:
             self.bot.edit_message_text(chat_id=self.message.chat.id, text='Курс больше не существует', message_id=self.message.message_id)
             return
